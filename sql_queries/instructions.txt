@@ -1,0 +1,114 @@
+Creer et requeter la base de données d'un site de e-commerce
+
+
+Contexte du projet
+Votre mission est divisée en trois temps:
+Complétez l'ébauche de modèle conceptuel élaboré par un de vos collègue (les relations sont bonnes mais il n'y a pas les cardinalités, il n'y a pas non plus les attributs et leurs type). Créez également le modèle physique
+Créez une BDD SQlite, créez les tables correspondants au sujet et ajoutez les données depuis les fichiers csv.
+Faites les requetes demandées pour mener à bien une première analyse de la base
+
+Modalités pédagogiques
+Vous êtes par équipe de 2, vous avez 1 journée et demi pour réaliser ce brief
+
+Modalités d'évaluation
+Correction en classe.
+
+
+Livrables
+Un github avec:
+- vos modèle conceptuel et physique au format jpeg
+- les fichiers csv et votre db dans le gitignore
+- les requetes permettant de répondre à chaque question dans des fichiers .sql
+
+
+Plan marketing d’un site de e-commerce brésilien.
+
+Vous avez obtenu les différentes tables d’un site de e-commerce. 
+
+I Importation des tables et comprehension des tables
+
+Commencer par importer les tables dans un nouvel ensemble de données créé ad hoc dénommé “Olist” (ce qui correspond au nom de l’entreprise.
+
+Pour chacune des tables indiquez quelle est la clef primaire et quelles sont les clefs étrangères (ainsi que la table vers laquelle elles pointent) comprises dans chaque table.
+
+Informations sur les tables:
+
+Customers:
+customer_id: key to the orders dataset. Each order has a unique customer_id.
+customer_unique_id: unique identifier of a customer.
+
+order_items
+shipping_limit_date: Shows the seller shipping limit date for handling the order over to the logistic partner.
+freight_value: item freight value item (if an order has more than one item the freight value is splitted between items) (frais de livraison)
+
+reviews:
+review_creation_date: Shows the date in which the satisfaction survey was sent to the customer.
+review_answer_timestamp: Shows satisfaction survey answer timestamp.
+
+orders
+order_delivered_carrier_date: Shows the order posting timestamp. When it was handled to the logistic partner.
+order_delivered_customer_date: Shows the actual order delivery date to the customer.
+order_estimated_delivery_date: Shows the estimated delivery date that was informed to customer at the purchase moment.
+
+order_payments
+payment_sequential: a customer may pay an order with more than one payment method. If he does so, a sequence will be created to
+payment_installements: number of installments chosen by the customer. (nombre de versements)
+
+II Analyse de la base customers:
+
+Les clients viennent de combien de villes et d’état différents?
+Dans l’état de Sao Paolo (SP), combien y a t il de ville différentes? (utilisez la table customers)
+La table Customers présente-t-elle des valeurs nulles? 
+
+
+
+
+La table présente deux id, (un de jointure, l’autre comme clef primaire). Est ce que l’un de ces ID est en doublon? 
+
+
+Quelle est la relation théorique entre customers et orders (one to many ou many to one)?
+Quelle relation est encodée dans les bases?
+
+A partir de l’analyse précédente, calculez le nombre réel de client par état (state)
+
+
+
+III Analyse de la base orders:
+
+On cherche à calculer le nombre de commandes, le nombre de produits vendus et le chiffre d'affaires (qui n’intègre pas les frais de port) pour chaque état du client. 
+Pour cela, à l’aide d’une requête imbriquée ou d’une table temporaire procédez en trois temps:
+à partir de la table orders items calculez les indicateurs souhaités
+faire une jointure ensuite avec la table order le customer_id
+faire une jointure enfin sur la table consumers pour récupérer le pays.
+
+
+IV Analyse de la base sellers / produits locaux:
+
+Réunissez sur une même table dont chaque ligne correspond à un order item:
+le prix du produit: order_item
+la catégorie du produit en anglais : categorie_name_translation
+le pays du vendeur: seller
+le pays de l’acheteur: custumer
+la date de vente: order
+
+
+A partir de la table précédente créée deux nouvelles colonnes.
+Une colonne “local_value” Si le pays du vendeur est le même que le pays de l’acheteur alors cette nouvelle colonne prendra comme valeur “local” s’ils sont différents la valeurs sera “inter-étatique”
+
+Une colonne “local_indicatrice” qui suit la même règle mais qui prendra la valeur 1 si l’état du vendeur et de l’acheteur sont les mêmes ou 0 autrement. 
+
+
+V Qualité de la description des produits
+
+On cherche à mesurer l’effet de la description des produits sur les ventes (taille description, nombre d’images).
+
+Pour cela on va modifier les variables “product_description_lenght” et “product_photos_qty” afin que les différentes “valeurs” qu'elles prennent aient toutes un nombre consistant de ligne. Par exemple, on ne veut pas savoir combien de description font exactement 138 caractères mais plutôt entre 100 et 150 caractères. Avant de faire cela il faut trouver les regroupements optimaux. 
+
+Commencez par déterminer combien il y a de commandes pour chaque quantité de photos dans la description
+
+
+On voit qu'au-delà de 6 photos le nombre de commandes est marginal. Modifiez la requete pour replacer toutes les valeurs supérieurs à 7 par le chiffre 7.
+
+
+
+
