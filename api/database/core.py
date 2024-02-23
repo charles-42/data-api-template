@@ -1,5 +1,4 @@
-from typing import Optional
-from sqlalchemy import create_engine, ForeignKey
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapped, mapped_column
 import uuid
 
@@ -21,6 +20,22 @@ class DBCustomers(Base):
     customer_zip_code_prefix: Mapped[str]
     customer_city: Mapped[str]
     customer_state: Mapped[str]
+
+class DBUsers(Base):
+
+    __tablename__ = "users"
+
+    username: Mapped[str] = mapped_column(primary_key=True, index=True)
+    email: Mapped[str]
+    full_name: Mapped[str]
+    disabled: Mapped[bool]
+    hashed_password: Mapped[str]
+
+class DBToken(Base):
+
+    __tablename__ = "tokens"
+
+    username: Mapped[str] = mapped_column(primary_key=True, index=True)
 
 engine = create_engine(DATABASE_URL)
 session_local = sessionmaker(autocommit=False, autoflush=False, bind=engine)

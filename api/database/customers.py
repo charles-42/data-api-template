@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import List
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from .core import DBCustomers, NotFoundError

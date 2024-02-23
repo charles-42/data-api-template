@@ -2,30 +2,21 @@ from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker, Session
 from database.core import Base, DBCustomers
 from typing import Generator
-from database.customers import Customer, CustomerCreate, CustomerUpdate, read_db_customer, read_db_one_customer, \
-    create_db_customer, update_db_customer, delete_db_customer
+from database.customers import CustomerCreate
+from database.authentificate import UserCreate, create_db_user
 import pytest
+from passlib.context import CryptContext
 
-
-# # Dependency to get the database session
-# def override_get_db():
-#     database = TesttingSessionLocal()
-#     try:
-#         yield database
-#     finally:
-#         database.close()
-
-# app.dependency_overrides[get_db] = override_get_db
 
 @pytest.fixture
 def session() -> Generator[Session, None, None]:
-    DATABASE_URL = "sqlite:///:memory:"
+    TEST_DATABASE_URL = "sqlite:///:memory:"
 
-    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread":False},poolclass=StaticPool)
-    TesttingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread":False},poolclass=StaticPool)
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
     Base.metadata.create_all(bind=engine)
-    db_session = TesttingSessionLocal()
+    db_session = TestingSessionLocal()
 
     #create test customers
     db_customer = DBCustomers(
@@ -57,4 +48,23 @@ def test_create_customers(session:Session) -> None:
     assert customer.customer_city=="franca"
     assert customer.customer_state=="SP"
 
-####....
+
+def test_create_user(session:Session) -> None: 
+    user = create_db_user( 
+        UserCreate( 
+            username="test_user",
+            email = "test_user@test.com",
+            full_name="test_user_fullname",
+            disabled=False,
+            plain_password = "test_password"
+            ), 
+            session)
+    
+    
+    assert user.username == "test_user"
+    assert user.email == "test_user@test.com"
+    assert user.full_name=="test_user_fullname"
+    assert user.disabled==False
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    assert pwd_context.verify("test_password", user.hashed_password)
+

@@ -2,7 +2,9 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from typing import List
+from typing import List, Annotated
 from database.core import NotFoundError, get_db
+from database.authentificate import oauth2_scheme
 from database.customers import Customer, CustomerCreate, CustomerUpdate, read_db_customer, read_db_one_customer, \
     create_db_customer, update_db_customer, delete_db_customer
 
@@ -27,12 +29,12 @@ def get_customers(request: Request,  db: Session = Depends(get_db)) -> List[Cust
     return [Customer(**customer.__dict__) for customer in db_customer]
 
 @router.post("/")
-def create_customer(request: Request, customer: CustomerCreate, db: Session = Depends(get_db)) -> Customer:
+def create_customer(token: Annotated[str, Depends(oauth2_scheme)],request: Request, customer: CustomerCreate, db: Session = Depends(get_db)) -> Customer:
     db_customer = create_db_customer(customer, db)
     return Customer(**db_customer.__dict__)
 
 @router.put("/{customer_id}")
-def update_customer(request: Request, customer_id: str, customer: CustomerUpdate, db: Session = Depends(get_db)) -> Customer:
+def update_customer(token: Annotated[str, Depends(oauth2_scheme)],request: Request, customer_id: str, customer: CustomerUpdate, db: Session = Depends(get_db)) -> Customer:
     try:
         db_customer = update_db_customer(customer_id, customer, db)
     except NotFoundError as e:
@@ -40,7 +42,7 @@ def update_customer(request: Request, customer_id: str, customer: CustomerUpdate
     return Customer(**db_customer.__dict__)
 
 @router.delete("/{customer_id}")
-def delete_customer(request: Request, customer_id: str, db: Session = Depends(get_db)) -> Customer:
+def delete_customer(token: Annotated[str, Depends(oauth2_scheme)],request: Request, customer_id: str, db: Session = Depends(get_db)) -> Customer:
     try:
         db_customer = delete_db_customer(customer_id, db)
     except NotFoundError as e:
