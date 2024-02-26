@@ -41,14 +41,13 @@ In the api folder, create a .env file with a SECRET_KEY variable
 4. You can execute tests to make sure the setup is good:
 
 ```bash
-cd api
 pytest
 ```
 
 5. Launch the API from the api folder:
 
 ```bash
-python3 main.py
+python3 api/main.py
 ```
 
 6. Use the API:
@@ -65,4 +64,3 @@ python3 main.py
 - https://fastapi.tiangolo.com/tutorial/security/
 - https://github.com/ArjanCodes/examples/tree/main/2023/fastapi-router
 - https://github.com/ArjanCodes/examples/tree/main/2023/apitesting
-- 
