@@ -29,9 +29,9 @@ pip install -r requirements.txt
 2. To create the Olist database, execute these two commands:
 
 ```bash
-sqlite3 olist.db < requetes_sql/create_table.sql
+sqlite3 olist.db < database_building/create_table.sql
 
-sqlite3 olist.db < requetes_sql/import_table.sql 2>/dev/null
+sqlite3 olist.db < database_building/import_table.sql 2>/dev/null
 ```
 
 3. Creatre environment variables;
