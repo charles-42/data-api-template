@@ -89,7 +89,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_db))->User:
+async def has_access(token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -108,5 +108,5 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], sessio
         raise credentials_exception
     elif db_user.disabled:
          raise HTTPException(status_code=400, detail="Inactive user")
-    return User(**db_user.__dict__)
+    return True
 

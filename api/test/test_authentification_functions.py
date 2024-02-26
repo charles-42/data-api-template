@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker, Session
 from database.core import Base
 from typing import Generator
-from database.authentificate import User, UserCreate, create_db_user, get_password_hash, verify_password, get_user, authenticate_user, get_current_user, create_access_token
+from database.authentificate import User, UserCreate, create_db_user, get_password_hash, verify_password, get_user, authenticate_user, has_access, create_access_token
 import pytest
 from datetime import timedelta, datetime, timezone
 from jose import jwt
@@ -105,11 +105,11 @@ def test_create_access_token():
 
 
 @pytest.mark.asyncio
-async def test_get_current_user(session):
+async def test_get_has_access(session):
     access_token_expires = timedelta(minutes=30)
     access_token = create_access_token(
         data={"sub": "test_user"}, expires_delta=access_token_expires
     )
-    current_user = await get_current_user(access_token, session)
-    assert isinstance(current_user, User)
-    assert current_user.username == "test_user" 
+    is_auth = await has_access(access_token, session)
+    assert isinstance(is_auth, bool)
+    assert is_auth == True

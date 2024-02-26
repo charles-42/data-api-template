@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from typing import List, Annotated
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from database.core import get_db
-from database.authentificate import Token, User, UserCreate, authenticate_user, create_db_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_user
+from database.authentificate import Token, User, UserCreate, authenticate_user, create_db_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, has_access
 
 router = APIRouter(
     prefix="/auth",
@@ -40,6 +40,6 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
 
 
 
-@router.get("/users/me/", response_model=None)
-async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
-    return current_user
+@router.get("/is_authorized", response_model=None)
+async def is_authorized(current_user: Annotated[User, Depends(has_access)]):
+    return True

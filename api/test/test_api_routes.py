@@ -130,15 +130,14 @@ def test_login_for_access_token(session):
 
 
 # Define a test case
-def test_read_users_me(session:Session, valid_token): 
+def test_is_authorized(session:Session, valid_token): 
 
     # Make a request to the endpoint with the mock token
-    response = client.get("/auth/users/me/", headers={"Authorization": f"Bearer {'mocked_token'}"})
+    response = client.get("/auth/is_authorized/", headers={"Authorization": f"Bearer {'mocked_token'}"})
     
     # Assert the response status code
     assert response.status_code == 200
     
     # Assert any other aspects of the response if needed
     # For example, if you expect the response to contain user data
-    assert "username" in response.json()
-    assert response.json()["username"] == "test_user"
+    assert response.json() == True
