@@ -28,8 +28,7 @@ class UserCreate(BaseModel):
     username: str
     email: str
     full_name: str
-    disabled: bool
-    plain_password: str
+    password: str
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -44,12 +43,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 def create_db_user(user: UserCreate,  session: Session) -> DBUsers:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    hashed_password = pwd_context.hash(user.plain_password)
+    hashed_password = pwd_context.hash(user.password)
     db_user = DBUsers(
             username = user.username,
             email = user.email,
             full_name = user.full_name,
-            disabled = user.disabled,
             hashed_password = hashed_password 
     )
     session.add(db_user)

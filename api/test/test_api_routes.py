@@ -3,6 +3,7 @@ from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker, Session
 from database.core import Base, get_db, DBCustomers
 from database.authentificate import create_db_user, UserCreate
+from database.customers import generate_id
 from main import app
 from typing import Generator
 import pytest 
@@ -22,7 +23,7 @@ def session() -> Generator[Session, None, None]:
 
     #create test customers
     db_customer = DBCustomers(
-            customer_id = "1234",
+            customer_id = generate_id(),
             customer_unique_id = "4321",
             customer_zip_code_prefix = "59000",
             customer_city="Lille",
@@ -37,8 +38,7 @@ def session() -> Generator[Session, None, None]:
             username="test_user",
             email = "test_user@test.com",
             full_name="test_user_fullname",
-            disabled=False,
-            plain_password = "test_password"
+            password = "test_password"
             ), 
             db_session)
 
@@ -104,8 +104,7 @@ def test_create_user(session:Session):
             "username":"test_user_2",
             "email" : "test_user@test.com",
             "full_name":"test_user_fullname",
-            "disabled":False,
-            "plain_password" : "test_password"
+            "password" : "test_password"
             })
     assert response.status_code == 200, response.text
     assert 'username' in response.json() 

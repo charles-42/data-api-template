@@ -15,3 +15,6 @@ if __name__ == "__main__":
     cursor.execute("SELECT customer_id, customer_unique_id FROM Customers LIMIT 10")
     reviews = cursor.fetchall()
     print(reviews)
+
+
+

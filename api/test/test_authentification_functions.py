@@ -28,8 +28,7 @@ def session() -> Generator[Session, None, None]:
             username="test_user",
             email = "test_user@test.com",
             full_name="test_user_fullname",
-            disabled=False,
-            plain_password = "test_password"
+            password = "test_password"
             ), 
             db_session)
 

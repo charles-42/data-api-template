@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker, Session
 from database.core import Base, DBCustomers
 from typing import Generator
-from database.customers import CustomerCreate
+from database.customers import CustomerCreate, create_db_customer, generate_id
 from database.authentificate import UserCreate, create_db_user
 import pytest
 from passlib.context import CryptContext
@@ -20,7 +20,7 @@ def session() -> Generator[Session, None, None]:
 
     #create test customers
     db_customer = DBCustomers(
-            customer_id = "1234",
+            customer_id = generate_id(),
             customer_unique_id = "4321",
             customer_zip_code_prefix = "59000",
             customer_city="Lille",
@@ -43,6 +43,7 @@ def test_create_customers(session:Session) -> None:
             customer_state="SP"
             ), 
             session)
+    assert len(customer.customer_id) == 14
     assert customer.customer_unique_id == "861eff4711a542e4b93843c6dd7febb0"
     assert customer.customer_zip_code_prefix == "14409"
     assert customer.customer_city=="franca"
@@ -55,8 +56,7 @@ def test_create_user(session:Session) -> None:
             username="test_user",
             email = "test_user@test.com",
             full_name="test_user_fullname",
-            disabled=False,
-            plain_password = "test_password"
+            password = "test_password"
             ), 
             session)
     

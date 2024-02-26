@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapped, mapped_column
-import uuid
+
 
 DATABASE_URL = "sqlite:///olist.db"
 
@@ -11,15 +11,19 @@ class NotFoundError(Exception):
 class Base(DeclarativeBase):
     pass
 
+
+
 class DBCustomers(Base):
 
     __tablename__ = "customers"
 
-    customer_id: Mapped[str] = mapped_column(primary_key=True, index=True,default=str(uuid.uuid4))
+    customer_id: Mapped[str] = mapped_column(primary_key=True, index=True)
     customer_unique_id: Mapped[str]
-    customer_zip_code_prefix: Mapped[str]
+    customer_zip_code_prefix: Mapped[str] 
     customer_city: Mapped[str]
     customer_state: Mapped[str]
+
+
 
 class DBUsers(Base):
 
@@ -28,7 +32,7 @@ class DBUsers(Base):
     username: Mapped[str] = mapped_column(primary_key=True, index=True)
     email: Mapped[str]
     full_name: Mapped[str]
-    disabled: Mapped[bool]
+    disabled: Mapped[bool] = mapped_column(default=False)
     hashed_password: Mapped[str]
 
 class DBToken(Base):

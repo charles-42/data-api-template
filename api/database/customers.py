@@ -2,6 +2,8 @@ from typing import List
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from .core import DBCustomers, NotFoundError
+import string
+import random
 
 class Customer(BaseModel):
     customer_id: str
@@ -36,8 +38,15 @@ def read_db_customer(session: Session) -> List[DBCustomers]:
         raise NotFoundError(f"Database is empty")
     return db_customer
 
+def generate_id():
+    """Generate a unique string ID."""
+    length = 14
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for i in range(length))
+
+
 def create_db_customer(customer: CustomerCreate, session: Session) -> DBCustomers:
-    db_customer = DBCustomers(**customer.model_dump(exclude_none=True))
+    db_customer = DBCustomers(**customer.model_dump(exclude_none=True), customer_id=generate_id())
     session.add(db_customer)
     session.commit()
     session.refresh(db_customer)
